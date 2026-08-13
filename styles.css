@@ -340,8 +340,11 @@ details > p { max-width: 650px; margin: -5px 45px 25px 5px; color: var(--muted);
 .team-member { position: relative; z-index: 1; text-align: center; }
 .member-circle { position: relative; display: grid; place-items: center; width: 160px; height: 160px; margin: 0 auto 25px; border-radius: 50%; box-shadow: 0 14px 35px rgba(7,60,73,.13); transition: transform .3s, box-shadow .3s; }
 a.member-circle:hover { transform: translateY(-7px); box-shadow: 0 20px 45px rgba(7,60,73,.2); }
+.member-circle { overflow: hidden; }
+.member-circle img { width: 100%; height: 100%; object-fit: cover; }
+.member-circle.member-placeholder img { object-fit: cover; filter: sepia(.16) saturate(.7); }
 .member-circle span { font-size: 34px; font-weight: 800; letter-spacing: -.04em; }
-.member-circle small { position: absolute; right: 12px; bottom: 18px; display: grid; place-items: center; width: 33px; height: 33px; color: var(--teal); background: var(--white); border-radius: 50%; font-weight: 800; }
+.member-circle small { position: absolute; z-index: 1; right: 12px; bottom: 18px; display: grid; place-items: center; width: 33px; height: 33px; color: var(--teal); background: var(--white); border-radius: 50%; box-shadow: 0 4px 14px rgba(7,60,73,.2); font-weight: 800; }
 .member-circle.teal { color: var(--white); background: var(--teal); }
 .member-circle.green { color: var(--white); background: var(--green); }
 .member-circle.sage { color: var(--teal-dark); background: var(--lime); }
