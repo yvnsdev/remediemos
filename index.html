@@ -16,11 +16,14 @@
   <title>Fundación Remediemos | Salud que cuida el planeta</title>
   <link rel="icon" href="logo.jpg" type="image/jpeg">
   <link rel="preload" href="assets/accion-planeta-equipo.jpg" as="image">
+  <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="styles.css">
+  <script src="assets/vendor/leaflet/leaflet.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <div class="scroll-progress" aria-hidden="true"><span></span></div>
 
   <header class="site-header" id="inicio">
     <div class="container nav-wrap">
@@ -34,6 +37,7 @@
       <nav id="main-nav" class="main-nav" aria-label="Navegación principal">
         <a href="#nosotros">Nosotros</a>
         <a href="#accion">Qué hacemos</a>
+        <a href="#puntos">Puntos verdes</a>
         <a href="#equipo">Equipo</a>
         <a href="#eventos">Eventos</a>
         <a href="#galeria">Galería</a>
@@ -151,7 +155,7 @@
         <div class="action-photo-band reveal" aria-label="Remediemos en acción">
           <figure><img src="assets/accion-planeta-conversacion.jpg" alt="Presentación del programa de recolección de medicamentos" width="800" height="534" loading="lazy"><figcaption>Compartimos conocimiento</figcaption></figure>
           <figure><img src="assets/punto-recoleccion.jpg" alt="Punto Acción Planeta para recolectar medicamentos" width="800" height="450" loading="lazy"><figcaption>Activamos soluciones</figcaption></figure>
-          <figure><img src="assets/accion-planeta-punto.jpg" alt="Equipo y organizaciones aliadas junto al punto de recolección" width="800" height="534" loading="lazy"><figcaption>Construimos alianzas</figcaption></figure>
+          <figure><img src="assets/accion-planeta-equipo.jpg" alt="Equipo y organizaciones aliadas inaugurando un punto de recolección" width="800" height="534" loading="lazy"><figcaption>Construimos alianzas</figcaption></figure>
         </div>
 
         <div class="how-to reveal">
@@ -159,7 +163,7 @@
             <p class="eyebrow light"><span></span> Empieza hoy</p>
             <h3>Haz una pausa antes de botar.</h3>
             <p>Los medicamentos no van al lavaplatos, al inodoro ni a la basura común. Revisa tu botiquín y busca un punto autorizado.</p>
-            <a class="button button-light" href="https://www.instagram.com/remediemos/" target="_blank" rel="noopener noreferrer">Consultar puntos en Instagram <span>↗</span></a>
+            <a class="button button-light" href="#puntos">Encontrar mi punto verde <span>↓</span></a>
           </div>
           <ol class="steps">
             <li><span>1</span><div><strong>Revisa</strong><p>Fecha, estado y medicamentos que ya no utilizas.</p></div></li>
@@ -171,6 +175,70 @@
       </div>
     </section>
 
+    <section class="section points-section" id="puntos" aria-labelledby="points-title">
+      <div class="points-blob points-blob-one" aria-hidden="true"></div>
+      <div class="points-blob points-blob-two" aria-hidden="true"></div>
+      <div class="container">
+        <div class="section-heading split-heading points-heading reveal">
+          <div>
+            <p class="eyebrow"><span></span> 20 puntos · 15 comunas</p>
+            <h2 id="points-title">Tu botiquín tiene<br>un destino mejor.</h2>
+          </div>
+          <div class="points-intro">
+            <p>Encuentra un Punto Verde Acción Planeta en una Farmacia Cruz Verde de la Región Metropolitana. Toca un marcador para conocer su dirección, horario y cómo llegar.</p>
+            <a class="source-note" href="https://es.linkedin.com/posts/farmaciascruzverdechile_puntos-de-recolecci%C3%B3n-acci%C3%B3n-planeta-activity-7373369252701184000-BxPQ" target="_blank" rel="noopener noreferrer">Ubicaciones publicadas por Cruz Verde ↗ · Verifica el horario antes de ir.</a>
+          </div>
+        </div>
+
+        <div class="points-toolbar reveal" role="search" aria-label="Buscar puntos verdes">
+          <label class="point-search">
+            <span aria-hidden="true">⌕</span>
+            <span class="sr-only">Buscar por comuna o dirección</span>
+            <input id="point-search" type="search" placeholder="Busca tu comuna o dirección" autocomplete="off">
+          </label>
+          <button class="locate-button" id="locate-me" type="button"><span aria-hidden="true">◎</span> Usar mi ubicación</button>
+          <div class="points-count" aria-live="polite"><strong id="visible-points">20</strong><span>puntos visibles</span></div>
+        </div>
+
+        <div class="map-shell reveal">
+          <div class="map-copy">
+            <div class="map-copy-top">
+              <p class="map-kicker">Mapa vivo</p>
+              <h3>Elige tu punto<br>más cercano.</h3>
+              <p>Navega por Santiago, filtra la lista o deja que encontremos el punto más próximo a ti.</p>
+            </div>
+            <div class="map-legend">
+              <span><i class="legend-pin"></i> Punto Acción Planeta</span>
+              <span><i class="legend-you"></i> Tu ubicación</span>
+            </div>
+            <div class="map-nudge"><span>♻</span><p><strong>Pequeña acción, gran recorrido.</strong><br>Lo que entregas se valoriza de forma segura.</p></div>
+          </div>
+          <div class="map-stage">
+            <div id="green-map" role="application" aria-label="Mapa interactivo de puntos verdes en Santiago"></div>
+            <button class="map-reset" id="map-reset" type="button" aria-label="Ver todos los puntos">Ver todos</button>
+          </div>
+        </div>
+
+        <div class="point-list-wrap reveal">
+          <div class="point-list-heading">
+            <div><p class="eyebrow"><span></span> Explora la red</p><h3>Todos los puntos</h3></div>
+            <button class="list-toggle" id="list-toggle" type="button" aria-expanded="false" aria-controls="point-list">Ver lista completa <span>＋</span></button>
+          </div>
+          <div class="point-list" id="point-list"></div>
+          <p class="no-results" id="no-results" hidden>No encontramos puntos con esa búsqueda. Prueba con otra comuna o dirección.</p>
+        </div>
+
+        <div class="drop-guide reveal">
+          <div class="drop-guide-art" aria-hidden="true"><span>✓</span><span>×</span></div>
+          <div><p class="map-kicker">Antes de salir</p><h3>Prepara tu entrega.</h3></div>
+          <div class="drop-guide-items">
+            <p><span>✓</span><strong>Sí lleva</strong> medicamentos vencidos, en desuso o en mal estado.</p>
+            <p><span>×</span><strong>No lleves</strong> agujas, jeringas, vidrio ni elementos cortopunzantes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section team-section" id="equipo">
       <div class="container">
         <div class="section-heading split-heading reveal">
@@ -178,30 +246,15 @@
             <p class="eyebrow"><span></span> Las personas detrás</p>
             <h2>Un equipo que combina ciencia y compromiso.</h2>
           </div>
-          <p>Somos profesionales y voluntarios de distintas disciplinas unidos por una convicción: la salud sostenible se construye con conocimiento, empatía y trabajo colectivo.</p>
+          <p>Somos profesionales de distintas disciplinas unidos por una convicción: la salud sostenible se construye con conocimiento, empatía y trabajo colectivo.</p>
         </div>
 
         <div class="team-line" aria-label="Equipo Fundación Remediemos">
-          <article class="team-member reveal">
-            <a class="member-circle teal" href="https://www.linkedin.com/in/nicol%C3%A1s-troncoso-medina99" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Nicolás Troncoso"><img src="assets/nicolas-troncoso.jpg" alt="Nicolás Troncoso" width="320" height="320" loading="lazy"><small>↗</small></a>
-            <p class="role">Dirección ejecutiva</p><h3>Nicolás Troncoso</h3><p>Fundador y articulador de innovación social.</p>
-          </article>
-          <article class="team-member reveal reveal-delay">
-            <a class="member-circle green member-placeholder" href="https://cl.linkedin.com/in/natalie-cristi-hern%C3%A1ndez-0495b92bb" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Natalie Cristi"><img src="assets/perfil-generico.png" alt="Perfil de Natalie Cristi" width="320" height="320" loading="lazy"><small>↗</small></a>
-            <p class="role">Dirección sanitaria</p><h3>Natalie Cristi</h3><p>Salud ambiental y enfoque One Health.</p>
-          </article>
-          <article class="team-member reveal">
-            <a class="member-circle sage member-placeholder" href="https://cl.linkedin.com/in/matias-montecinos-torres-a39668147" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Matías Montecinos"><img src="assets/perfil-generico.png" alt="Perfil de Matías Montecinos" width="320" height="320" loading="lazy"><small>↗</small></a>
-            <p class="role">Secretaría</p><h3>Matías Montecinos</h3><p>Sustentabilidad, divulgación y gestión.</p>
-          </article>
-          <article class="team-member reveal reveal-delay">
-            <a class="member-circle cream member-placeholder" href="https://cl.linkedin.com/in/daydanne-s%C3%A1nchez-mu%C3%B1oz-939312265" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Dayane Sánchez"><img src="assets/perfil-generico.png" alt="Perfil de Dayane Sánchez" width="320" height="320" loading="lazy"><small>↗</small></a>
-            <p class="role">Comunicaciones</p><h3>Dayane Sánchez</h3><p>Comunidad, contenidos y comunicación con propósito.</p>
-          </article>
-          <article class="team-member reveal">
-            <a class="member-circle outline" href="https://www.linkedin.com/in/monserrat-vera-de-la-hoz-0156a7288/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Monserrat Vera"><img src="assets/monserrat-vera.jpg" alt="Monserrat Vera" width="320" height="320" loading="lazy"><small>↗</small></a>
-            <p class="role">Publicidad y finanzas</p><h3>Monserrat Vera</h3><p>Gestión, difusión y una de las impulsoras del proyecto.</p>
-          </article>
+          <article class="team-member reveal"><a class="member-circle teal" href="https://www.linkedin.com/in/nicol%C3%A1s-troncoso-medina99" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Nicolás Troncoso"><img src="assets/nicolas-troncoso.jpg" alt="Nicolás Troncoso" width="320" height="320" loading="lazy"><small>↗</small></a><p class="role">Dirección ejecutiva</p><h3>Nicolás Troncoso</h3><p>Estrategia, alianzas e impacto público.</p></article>
+          <article class="team-member reveal reveal-delay"><a class="member-circle green" href="https://cl.linkedin.com/in/natalie-cristi-hern%C3%A1ndez-0495b92bb" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Natalie Hernández"><span aria-hidden="true">NH</span><small>↗</small></a><p class="role">Dirección sanitaria y secretaría</p><h3>Natalie Hernández</h3><p>Rigor sanitario y enfoque One Health.</p></article>
+          <article class="team-member reveal"><a class="member-circle sage" href="https://cl.linkedin.com/in/matias-montecinos-torres-a39668147" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Matías Montecinos"><img src="assets/matias-montecinos.jpg" alt="Matías Montecinos" width="320" height="320" loading="lazy"><small>↗</small></a><p class="role">Dirección de innovación</p><h3>Matías Montecinos</h3><p>Soluciones, proyectos e innovación sostenible.</p></article>
+          <article class="team-member reveal reveal-delay"><a class="member-circle cream" href="https://cl.linkedin.com/in/daydanne-s%C3%A1nchez-mu%C3%B1oz-939312265" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Daydanne Sánchez"><img src="assets/daydanne-sanchez.png" alt="Daydanne Sánchez" width="320" height="320" loading="lazy"><small>↗</small></a><p class="role">Presidencia</p><h3>Daydanne Sánchez</h3><p>Gobernanza, representación y propósito.</p></article>
+          <article class="team-member reveal"><a class="member-circle outline" href="https://www.linkedin.com/in/monserrat-vera-de-la-hoz-0156a7288/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de Monserrat Vera"><img src="assets/monserrat-vera.jpg" alt="Monserrat Vera" width="320" height="320" loading="lazy"><small>↗</small></a><p class="role">Dirección de finanzas</p><h3>Monserrat Vera</h3><p>Planificación y sostenibilidad financiera.</p></article>
         </div>
         <div class="team-invite reveal"><span>＋</span><p><strong>La red sigue creciendo.</strong> Profesionales y estudiantes de distintas áreas hacen posible este trabajo.</p><a href="#sumate">Súmate al equipo →</a></div>
       </div>
@@ -217,7 +270,7 @@
         <div class="timeline">
           <article class="event-card event-feature reveal">
             <div class="event-image">
-              <img src="assets/accion-planeta-punto.jpg" alt="Representantes de organizaciones colaboradoras junto a un Punto Acción Planeta" width="800" height="534" loading="lazy">
+              <img src="assets/accion-planeta-equipo.jpg" alt="Representantes de organizaciones colaboradoras junto a un Punto Acción Planeta" width="800" height="534" loading="lazy">
               <span class="event-chip">Alianza activa</span>
             </div>
             <div class="event-content">
@@ -260,8 +313,8 @@
             <img src="assets/accion-planeta-equipo.jpg" alt="Colaboradores depositando medicamentos en un punto de recolección" width="800" height="534" loading="lazy">
             <span>Alianzas que movilizan</span>
           </button>
-          <button class="gallery-item gallery-tall reveal reveal-delay" type="button" data-src="assets/accion-planeta-punto.jpg" data-caption="Punto Acción Planeta para la entrega segura de medicamentos.">
-            <img src="assets/accion-planeta-punto.jpg" alt="Equipo junto a contenedor de Acción Planeta" width="800" height="534" loading="lazy">
+          <button class="gallery-item gallery-tall reveal reveal-delay" type="button" data-src="assets/accion-planeta-conversacion.jpg" data-caption="Encuentro de Acción Planeta para la entrega segura de medicamentos.">
+            <img src="assets/accion-planeta-conversacion.jpg" alt="Encuentro junto al contenedor de Acción Planeta" width="800" height="534" loading="lazy">
             <span>Acción Planeta</span>
           </button>
           <button class="gallery-item reveal" type="button" data-src="assets/punto-recoleccion.jpg" data-caption="Una solución visible, simple y segura para la comunidad.">
@@ -311,15 +364,13 @@
     <section class="cta-section" id="sumate">
       <div class="container cta-grid reveal">
         <div>
-          <p class="eyebrow light"><span></span> Hazte parte</p>
+          <p class="eyebrow light"><span></span> Súmate</p>
           <h2>Hay mucho por remediar.<br><em>Empecemos juntos.</em></h2>
         </div>
         <div class="cta-copy">
           <p>Personas, comunidades, universidades y empresas: todas las manos cuentan. Cuéntanos cómo te gustaría aportar.</p>
-          <div class="cta-actions">
-            <a class="button button-light" href="mailto:contacto@ecofarmacovigilancia.com?subject=Quiero%20sumarme%20a%20Remediemos">Escríbenos <span>↗</span></a>
-            <a class="instagram-link" href="https://www.instagram.com/remediemos/" target="_blank" rel="noopener noreferrer">@remediemos</a>
-          </div>
+          <div class="cta-actions"><a class="button button-light" href="mailto:contacto@ecofarmacovigilancia.com?subject=Quiero%20sumarme%20a%20Remediemos">Quiero sumarme <span>↗</span></a><a class="instagram-link" href="https://www.instagram.com/remediemos/" target="_blank" rel="noopener noreferrer">@remediemos</a></div>
+          <div class="future-donations-note"><span>Próximamente</span><p><strong>Futuras donaciones.</strong> Estamos preparando un canal seguro y transparente para apoyar nuestros proyectos.</p></div>
         </div>
       </div>
       <div class="cta-word" aria-hidden="true">REMEDIEMOS</div>
@@ -336,8 +387,8 @@
         <p>Por nuestra salud y la del planeta.</p>
       </div>
       <div class="footer-links">
-        <div><p>Explora</p><a href="#nosotros">Nosotros</a><a href="#accion">Qué hacemos</a><a href="#equipo">Equipo</a><a href="#galeria">Galería</a></div>
-        <div><p>Conversemos</p><a href="https://www.instagram.com/remediemos/" target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href="mailto:contacto@ecofarmacovigilancia.com">Correo ↗</a><a href="#sumate">Voluntariado</a></div>
+        <div><p>Explora</p><a href="#nosotros">Nosotros</a><a href="#accion">Qué hacemos</a><a href="#puntos">Puntos verdes</a><a href="#equipo">Equipo</a><a href="#galeria">Galería</a></div>
+        <div><p>Conversemos</p><a href="https://www.instagram.com/remediemos/" target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href="mailto:contacto@ecofarmacovigilancia.com">Correo ↗</a><a href="#sumate">Voluntariado y donaciones</a></div>
       </div>
     </div>
     <div class="container footer-bottom"><span>© <span id="year"></span> Fundación Remediemos</span><span>Temuco · Santiago · Chile</span><span>Desarrollado por <a href="https://ntek.cl" target="_blank" rel="noopener noreferrer">Equipo Ntek</a></span></div>
@@ -348,5 +399,38 @@
     <img src="" alt="">
     <p></p>
   </dialog>
+
+  <dialog class="point-dialog" id="point-dialog" aria-labelledby="point-dialog-title">
+    <button class="point-dialog-close" type="button" aria-label="Cerrar ficha">×</button>
+    <div class="point-dialog-image">
+      <img src="assets/punto-recoleccion.jpg" alt="Contenedor Punto Acción Planeta para medicamentos" width="800" height="450">
+      <div class="point-dialog-image-copy">
+        <span class="point-dialog-chip">Punto Acción Planeta</span>
+        <p>Tu entrega inicia un recorrido seguro y responsable.</p>
+      </div>
+    </div>
+    <div class="point-dialog-body">
+      <div class="point-dialog-head">
+        <div>
+          <p class="point-dialog-commune" id="point-dialog-commune"></p>
+          <span class="point-dialog-status"><i></i> Punto habilitado</span>
+        </div>
+        <div class="point-dialog-number" id="point-dialog-number">CV</div>
+      </div>
+      <h2 id="point-dialog-title"></h2>
+      <p class="point-dialog-place" id="point-dialog-place"></p>
+      <div class="point-dialog-tags" aria-label="Qué puedes entregar"><span>Medicamentos vencidos</span><span>Medicamentos en desuso</span></div>
+      <div class="point-dialog-details">
+        <div><span aria-hidden="true">⌖</span><span><small>Dirección del punto</small><strong id="point-dialog-address"></strong></span></div>
+        <div><span aria-hidden="true">◷</span><span><small>Días de atención</small><strong id="point-dialog-hours"></strong></span></div>
+      </div>
+      <div class="point-dialog-actions">
+        <a class="button button-primary" id="point-directions" href="#" target="_blank" rel="noopener noreferrer" aria-label="Abrir indicaciones en Google Maps">Abrir en Google Maps <span>↗</span></a>
+        <button class="copy-address" id="copy-address" type="button"><span aria-hidden="true">▢</span> Copiar dirección</button>
+      </div>
+      <div class="point-dialog-tip"><span>!</span><p><strong>Antes de ir</strong> Revisa que los envases estén bien cerrados y protégelos durante el trayecto.</p></div>
+    </div>
+  </dialog>
+
 </body>
 </html>
